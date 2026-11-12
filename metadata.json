@@ -1,0 +1,6 @@
+{
+  "name": "Smart Coders - Educational Platform",
+  "description": "Smart Coders educational learning management platform powered by SmartTech Training Center for children aged 4-6 and beyond.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
