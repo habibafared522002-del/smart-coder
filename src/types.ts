@@ -28,7 +28,7 @@ export type LearningPathway = 'junior' | 'explorer' | 'innovator';
 export interface Activity {
   id: string;
   title: { ar: string; en: string };
-  type: 'robot_maze' | 'sequencing' | 'matching' | 'debugging' | 'drag_drop' | 'safe_choices' | 'drag_drop_shapes' | 'compass_game' | 'puzzle_studio' | 'mouse_explorer' | 'code_builder';
+  type: 'robot_maze' | 'sequencing' | 'matching' | 'debugging' | 'drag_drop' | 'safe_choices' | 'drag_drop_shapes' | 'compass_game' | 'puzzle_studio' | 'mouse_explorer' | 'code_builder' | 'workshop_organizer';
   config?: any;
 }
 
@@ -85,8 +85,12 @@ export interface StudentProgress {
   xpEarned?: number;
   badges: string[];
   lastActiveDate: string;
+  dailyStreak?: number;
+  lastStreakDate?: string;
+  activeDates?: string[];
   selectedAgeGroup?: JuniorAgeGroup;
   unlockedJigsawByAge?: Record<JuniorAgeGroup, number>;
+  unlockedWorkshopByAge?: Record<JuniorAgeGroup, number>;
   enjoymentRatings?: Record<string, 'loved' | 'okay'>;
 }
 

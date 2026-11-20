@@ -29,6 +29,7 @@ import {
   setAudioMuted,
   getAudioMuted,
 } from '../utils/soundEffects';
+import { SmartyMascot3D } from './SmartyMascot3D';
 
 interface JigsawGameEngineProps {
   language: Language;
@@ -1012,11 +1013,11 @@ export const JigsawGameEngine: React.FC<JigsawGameEngineProps> = ({
       {/* Instruction & SmartTech Robot Companion Header */}
       <div className="px-6 py-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="flex items-start gap-4 flex-1">
-          {/* Interactive Robot Companion Expression */}
+          {/* Interactive 3D SmartTech Robot Companion Expression */}
           <div
             data-testid="robot-companion"
             data-robot-mood={robotMood}
-            className={`w-14 h-14 rounded-2xl flex items-center justify-center border shrink-0 transition-colors ${
+            className={`w-20 h-20 rounded-2xl flex items-center justify-center border shrink-0 transition-colors p-1 ${
               robotMood === 'success'
                 ? 'bg-emerald-100 dark:bg-emerald-950 border-emerald-400'
                 : robotMood === 'retry'
@@ -1024,29 +1025,21 @@ export const JigsawGameEngine: React.FC<JigsawGameEngineProps> = ({
                 : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
             }`}
           >
-            <svg viewBox="0 0 64 64" className="w-11 h-11" aria-hidden="true">
-              <rect x="12" y="14" width="40" height="36" rx="10" fill="#E2E8F0" stroke="#334155" strokeWidth="3" />
-              <rect x="18" y="22" width="28" height="14" rx="5" fill="#0F172A" />
-              <circle
-                cx="26"
-                cy="29"
-                r="3.2"
-                fill={robotMood === 'success' ? '#22C55E' : robotMood === 'retry' ? '#F59E0B' : '#38BDF8'}
-              />
-              <circle
-                cx="38"
-                cy="29"
-                r="3.2"
-                fill={robotMood === 'success' ? '#22C55E' : robotMood === 'retry' ? '#F59E0B' : '#38BDF8'}
-              />
-              {robotMood === 'success' ? (
-                <path d="M25 41 Q32 47 39 41" fill="none" stroke="#16A34A" strokeWidth="3" strokeLinecap="round" />
-              ) : robotMood === 'retry' ? (
-                <path d="M26 43 Q32 39 38 43" fill="none" stroke="#D97706" strokeWidth="3" strokeLinecap="round" />
-              ) : (
-                <line x1="26" y1="42" x2="38" y2="42" stroke="#334155" strokeWidth="3" strokeLinecap="round" />
-              )}
-            </svg>
+            <SmartyMascot3D
+              action={
+                robotMood === 'success'
+                  ? 'celebrating'
+                  : robotMood === 'retry'
+                  ? 'encouraging'
+                  : robotMood === 'hint'
+                  ? 'thinking'
+                  : robotMood === 'dragging'
+                  ? 'pointing'
+                  : 'greeting'
+              }
+              size="md"
+              lang={language}
+            />
           </div>
 
           <div className="min-w-0">
@@ -1217,15 +1210,17 @@ export const JigsawGameEngine: React.FC<JigsawGameEngineProps> = ({
             data-testid="level-complete-panel"
             className="mt-6 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 p-6 flex flex-col md:flex-row items-center justify-between gap-6 animate-snap"
           >
-            <div className="space-y-2 text-center md:text-start">
-              <div className="flex items-center justify-center md:justify-start gap-2 text-emerald-700 dark:text-emerald-300 font-black text-xl">
-                <CheckCircle2 className="w-6 h-6" />
-                <span>
-                  {isAr
-                    ? 'عمل ممتاز! تم تجميع الصورة وإتمام المستوى!'
-                    : 'Excellent Work! Puzzle Reconstructed & Completed!'}
-                </span>
-              </div>
+            <div className="flex items-center gap-4">
+              <SmartyMascot3D action="victory" size="lg" lang={language} />
+              <div className="space-y-2 text-center md:text-start">
+                <div className="flex items-center justify-center md:justify-start gap-2 text-emerald-700 dark:text-emerald-300 font-black text-xl">
+                  <CheckCircle2 className="w-6 h-6" />
+                  <span>
+                    {isAr
+                      ? 'عمل ممتاز! تم تجميع الصورة وإتمام المستوى!'
+                      : 'Excellent Work! Puzzle Reconstructed & Completed!'}
+                  </span>
+                </div>
               <p className="text-sm text-slate-700 dark:text-slate-300">
                 {xpNotice === 'awarded'
                   ? isAr
@@ -1263,6 +1258,7 @@ export const JigsawGameEngine: React.FC<JigsawGameEngineProps> = ({
                 >
                   🙂 {isAr ? 'جيدة' : 'It was okay'}
                 </button>
+              </div>
               </div>
             </div>
 

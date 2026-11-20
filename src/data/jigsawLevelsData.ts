@@ -703,6 +703,58 @@ export function resetJigsawLevelsToDefault(): JigsawLevelConfig[] {
   return defaultJigsawLevelsData;
 }
 
+export function getLocalIsoDate(date: Date = new Date()): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+export function diffCalendarDays(earlierIso: string, laterIso: string): number {
+  const [y1, m1, d1] = earlierIso.split('-').map(Number);
+  const [y2, m2, d2] = laterIso.split('-').map(Number);
+  if (!y1 || !m1 || !d1 || !y2 || !m2 || !d2) return 0;
+  const utc1 = Date.UTC(y1, m1 - 1, d1);
+  const utc2 = Date.UTC(y2, m2 - 1, d2);
+  return Math.round((utc2 - utc1) / (1000 * 60 * 60 * 24));
+}
+
+export function recordDailyStreakActivity(
+  progress: StudentProgress,
+  todayOverride?: string
+): StudentProgress {
+  const today = todayOverride || getLocalIsoDate();
+  const prevDate = progress.lastStreakDate || progress.lastActiveDate;
+  const prevStreak = Math.max(0, progress.dailyStreak ?? 0);
+  const existingDates = Array.isArray(progress.activeDates) ? progress.activeDates : [];
+
+  let nextStreak = prevStreak;
+  if (!prevDate) {
+    nextStreak = Math.max(1, prevStreak);
+  } else if (prevDate === today) {
+    nextStreak = Math.max(1, prevStreak);
+  } else {
+    const dayDiff = diffCalendarDays(prevDate, today);
+    if (dayDiff === 1) {
+      nextStreak = Math.max(1, prevStreak) + 1;
+    } else if (dayDiff > 1) {
+      nextStreak = 1;
+    } else {
+      nextStreak = Math.max(1, prevStreak);
+    }
+  }
+
+  const nextActiveDates = Array.from(new Set([...existingDates, today])).sort().slice(-14);
+
+  return {
+    ...progress,
+    dailyStreak: nextStreak,
+    lastStreakDate: today,
+    lastActiveDate: today,
+    activeDates: nextActiveDates,
+  };
+}
+
 export function loadStudentProgress(fallback: StudentProgress): StudentProgress {
   const defaultUnlocked: Record<JuniorAgeGroup, number> = {
     '3-4': 1,
@@ -713,8 +765,12 @@ export function loadStudentProgress(fallback: StudentProgress): StudentProgress 
     return {
       ...fallback,
       xpEarned: fallback.xpEarned ?? fallback.starsEarned * 10,
+      dailyStreak: fallback.dailyStreak ?? 1,
+      lastStreakDate: fallback.lastStreakDate ?? fallback.lastActiveDate,
+      activeDates: fallback.activeDates ?? [fallback.lastActiveDate],
       selectedAgeGroup: fallback.selectedAgeGroup ?? '4-5',
       unlockedJigsawByAge: fallback.unlockedJigsawByAge ?? defaultUnlocked,
+      unlockedWorkshopByAge: fallback.unlockedWorkshopByAge ?? defaultUnlocked,
       enjoymentRatings: fallback.enjoymentRatings ?? {},
     };
   }
@@ -726,8 +782,12 @@ export function loadStudentProgress(fallback: StudentProgress): StudentProgress 
         ...fallback,
         ...parsed,
         xpEarned: parsed.xpEarned ?? (parsed.starsEarned || 0) * 10,
+        dailyStreak: parsed.dailyStreak ?? fallback.dailyStreak ?? 1,
+        lastStreakDate: parsed.lastStreakDate ?? parsed.lastActiveDate ?? fallback.lastActiveDate,
+        activeDates: parsed.activeDates ?? fallback.activeDates ?? [fallback.lastActiveDate],
         selectedAgeGroup: parsed.selectedAgeGroup ?? '4-5',
         unlockedJigsawByAge: { ...defaultUnlocked, ...(parsed.unlockedJigsawByAge || {}) },
+        unlockedWorkshopByAge: { ...defaultUnlocked, ...(parsed.unlockedWorkshopByAge || {}) },
         enjoymentRatings: parsed.enjoymentRatings ?? {},
       };
     }
@@ -737,8 +797,12 @@ export function loadStudentProgress(fallback: StudentProgress): StudentProgress 
   return {
     ...fallback,
     xpEarned: fallback.xpEarned ?? fallback.starsEarned * 10,
+    dailyStreak: fallback.dailyStreak ?? 1,
+    lastStreakDate: fallback.lastStreakDate ?? fallback.lastActiveDate,
+    activeDates: fallback.activeDates ?? [fallback.lastActiveDate],
     selectedAgeGroup: fallback.selectedAgeGroup ?? '4-5',
     unlockedJigsawByAge: fallback.unlockedJigsawByAge ?? defaultUnlocked,
+    unlockedWorkshopByAge: fallback.unlockedWorkshopByAge ?? defaultUnlocked,
     enjoymentRatings: fallback.enjoymentRatings ?? {},
   };
 }

@@ -420,11 +420,24 @@ export const initialMaterials: EducationalMaterial[] = [
   }
 ];
 
+function getDaysAgoIso(daysAgo: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() - daysAgo);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 export const initialProgress: StudentProgress = {
   studentId: 'child-01',
   completedLessonIds: ['les-1'],
   completedActivityIds: ['act-1'],
   starsEarned: 15,
   badges: ['مواطن رقمي ذكي', 'بطل سمارت تك'],
-  lastActiveDate: '2026-11-12',
+  lastActiveDate: getDaysAgoIso(1),
+  dailyStreak: 2,
+  lastStreakDate: getDaysAgoIso(1),
+  activeDates: [getDaysAgoIso(2), getDaysAgoIso(1)],
 };
+

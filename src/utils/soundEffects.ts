@@ -80,3 +80,25 @@ export const speakInstruction = (text: string, language: Language) => {
     // SpeechSynthesis unavailable
   }
 };
+
+export const playSound = (
+  kind: 'click' | 'move' | 'drop' | 'success' | 'win' | 'error'
+) => {
+  switch (kind) {
+    case 'click':
+    case 'move':
+      playPickupSfx();
+      break;
+    case 'drop':
+    case 'success':
+      playSnapSfx();
+      break;
+    case 'win':
+      playSuccessFanfareSfx();
+      break;
+    case 'error':
+      playRetrySfx();
+      break;
+  }
+};
+

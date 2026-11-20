@@ -6,7 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { Language, Theme, UserRole, EducationalMaterial, StudentProgress, LearningPathway } from './types';
 import { initialPrograms, initialMaterials, initialProgress } from './data/initialData';
-import { loadStudentProgress, saveStudentProgress } from './data/jigsawLevelsData';
+import { loadStudentProgress, recordDailyStreakActivity, saveStudentProgress } from './data/jigsawLevelsData';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { HomeView } from './components/HomeView';
@@ -18,6 +18,7 @@ import { MembershipView } from './components/MembershipView';
 import { PathwaysView } from './components/PathwaysView';
 import { ExplorerInnovatorView } from './components/ExplorerInnovatorView';
 import { JuniorCurriculumView } from './components/JuniorCurriculumView';
+import { ParentDashboard } from './components/ParentDashboard';
 
 export default function App() {
   const [language, setLanguage] = useState<Language>('ar');
@@ -29,8 +30,9 @@ export default function App() {
   const [progress, setProgress] = useState<StudentProgress>(() => loadStudentProgress(initialProgress));
 
   const handleUpdateProgress = (nextProgress: StudentProgress) => {
-    setProgress(nextProgress);
-    saveStudentProgress(nextProgress);
+    const withStreak = recordDailyStreakActivity(nextProgress);
+    setProgress(withStreak);
+    saveStudentProgress(withStreak);
   };
 
   useEffect(() => {
@@ -74,6 +76,7 @@ export default function App() {
         setCurrentRole={setCurrentRole as (role: UserRole) => void}
         onNavigateToLabs={() => setCurrentRole('labs')}
         onNavigateToMembership={() => setCurrentRole('membership')}
+        dailyStreak={progress.dailyStreak ?? 1}
       />
 
       <main className="flex-grow">
@@ -105,6 +108,7 @@ export default function App() {
             onUpdateProgress={handleUpdateProgress}
           />
         )}
+        {currentRole === 'parent' && <ParentDashboard language={language} />}
         {currentRole === 'teacher' && (
           <TeacherDashboard
             language={language}

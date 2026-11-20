@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Volume2, Play, RotateCcw, CheckCircle2, AlertCircle, Star, Award, Sparkles } from 'lucide-react';
 import { Language, StudentProgress } from '../types';
 import { mouseExplorerLevels, MouseExplorerLevelConfig } from '../data/mouseExplorerData';
+import { SmartyMascot3D } from './SmartyMascot3D';
 
 interface MouseExplorerGamePlayerProps {
   language: Language;
@@ -84,6 +85,7 @@ export const MouseExplorerGamePlayer: React.FC<MouseExplorerGamePlayerProps> = (
             ...progress,
             completedActivityIds: [...progress.completedActivityIds, `me-lvl-${currentLevel.levelNumber}`],
             starsEarned: progress.starsEarned + 1,
+            xpEarned: (progress.xpEarned || 0) + currentLevel.xpReward,
             starsEarnedToday: (progress.starsEarned || 0) + currentLevel.xpReward,
           };
           onUpdateProgress(updated);
@@ -137,8 +139,20 @@ export const MouseExplorerGamePlayer: React.FC<MouseExplorerGamePlayerProps> = (
       {/* Instruction Panel (Code.org Style) */}
       <div className="bg-white dark:bg-slate-900 p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6 shadow-inner">
         <div className="flex items-start gap-4 flex-1">
-          <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-950 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 shadow-inner">
-            🤖
+          <div className="w-16 h-16 bg-indigo-50 dark:bg-indigo-950 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-inner p-1">
+            <SmartyMascot3D
+              action={
+                levelState === 'success'
+                  ? 'celebrating'
+                  : levelState === 'retry'
+                  ? 'encouraging'
+                  : levelState === 'workspace'
+                  ? 'pointing'
+                  : 'greeting'
+              }
+              size="sm"
+              lang={language}
+            />
           </div>
           <div>
             <h4 className="text-lg font-black text-slate-900 dark:text-white leading-snug">
@@ -174,8 +188,8 @@ export const MouseExplorerGamePlayer: React.FC<MouseExplorerGamePlayerProps> = (
       <div className="p-8">
         {levelState === 'instruction' && (
           <div className="text-center py-12 space-y-6">
-            <div className="w-24 h-24 bg-red-100 dark:bg-red-950 text-red-600 rounded-3xl flex items-center justify-center mx-auto text-5xl shadow-inner animate-bounce">
-              🎯
+            <div className="flex items-center justify-center mx-auto">
+              <SmartyMascot3D action="greeting" size="xl" lang={language} />
             </div>
             <p className="text-xl font-bold text-slate-800 dark:text-slate-200 max-w-md mx-auto">
               {currentLevel.instruction[language]}
@@ -229,8 +243,8 @@ export const MouseExplorerGamePlayer: React.FC<MouseExplorerGamePlayerProps> = (
 
         {levelState === 'success' && (
           <div className="text-center py-8 space-y-6">
-            <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-4xl animate-bounce">
-              🎉
+            <div className="flex items-center justify-center mx-auto">
+              <SmartyMascot3D action="victory" size="xl" lang={language} />
             </div>
             <h4 className="text-2xl font-black text-slate-900 dark:text-white">
               {currentLevel.correctMessage[language]}
@@ -252,8 +266,8 @@ export const MouseExplorerGamePlayer: React.FC<MouseExplorerGamePlayerProps> = (
 
         {levelState === 'retry' && (
           <div className="text-center py-8 space-y-6">
-            <div className="w-20 h-20 bg-amber-100 dark:bg-amber-950 text-amber-600 rounded-full flex items-center justify-center mx-auto text-4xl">
-              💪
+            <div className="flex items-center justify-center mx-auto">
+              <SmartyMascot3D action="encouraging" size="xl" lang={language} />
             </div>
             <h4 className="text-2xl font-black text-slate-900 dark:text-white">
               {currentLevel.retryMessage[language]}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Volume2, Play, RotateCcw, CheckCircle2, AlertCircle, Star, Award, Sparkles, ThumbsUp, Meh, Frown, Video, Speaker } from 'lucide-react';
 import { Language, StudentProgress } from '../types';
 import { JuniorTask, JuniorLevel } from '../data/juniorCurriculumData';
+import { SmartyMascot3D } from './SmartyMascot3D';
 
 interface JuniorTaskRunnerProps {
   language: Language;
@@ -54,6 +55,7 @@ export const JuniorTaskRunner: React.FC<JuniorTaskRunnerProps> = ({
           ...progress,
           completedActivityIds: [...progress.completedActivityIds, currentTask.id],
           starsEarned: progress.starsEarned + 1,
+          xpEarned: (progress.xpEarned || 0) + currentTask.xpReward,
         };
         onUpdateProgress(updated);
       }
@@ -106,8 +108,20 @@ export const JuniorTaskRunner: React.FC<JuniorTaskRunnerProps> = ({
       {/* Code.org Style Top Instruction Box */}
       <div className="bg-white dark:bg-slate-900 p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6 shadow-inner">
         <div className="flex items-start gap-4 flex-1">
-          <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-950 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 shadow-inner">
-            💡
+          <div className="w-16 h-16 bg-indigo-50 dark:bg-indigo-950 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-inner p-1">
+            <SmartyMascot3D
+              action={
+                taskState === 'success'
+                  ? 'celebrating'
+                  : taskState === 'retry'
+                  ? 'encouraging'
+                  : taskState === 'demo'
+                  ? 'pointing'
+                  : 'thinking'
+              }
+              size="sm"
+              lang={language}
+            />
           </div>
           <div>
             <h4 className="text-lg font-black text-slate-900 dark:text-white leading-snug">
@@ -153,8 +167,8 @@ export const JuniorTaskRunner: React.FC<JuniorTaskRunnerProps> = ({
         {/* Step 1: Introduction */}
         {taskState === 'intro' && (
           <div className="text-center py-8 space-y-6">
-            <div className="w-24 h-24 bg-red-100 dark:bg-red-950 text-red-600 rounded-3xl flex items-center justify-center mx-auto text-5xl shadow-inner animate-bounce">
-              🤖
+            <div className="flex items-center justify-center mx-auto">
+              <SmartyMascot3D action="greeting" size="xl" lang={language} />
             </div>
             <p className="text-xl font-bold text-slate-800 dark:text-slate-200 max-w-md mx-auto leading-relaxed">
               {currentTask.instruction[language]}
@@ -172,8 +186,8 @@ export const JuniorTaskRunner: React.FC<JuniorTaskRunnerProps> = ({
         {/* Step 2: Demonstration */}
         {taskState === 'demo' && (
           <div className="text-center py-12 space-y-4">
-            <div className="w-20 h-20 bg-indigo-100 dark:bg-indigo-950 text-indigo-600 rounded-full flex items-center justify-center mx-auto text-4xl animate-pulse">
-              👁️
+            <div className="flex items-center justify-center mx-auto">
+              <SmartyMascot3D action="pointing" size="xl" lang={language} />
             </div>
             <h4 className="text-xl font-bold text-slate-800 dark:text-white">
               {isAr ? 'شاهد الروبوت يوضح الطريقة...' : 'Watch robot demonstrate...'}
@@ -219,8 +233,8 @@ export const JuniorTaskRunner: React.FC<JuniorTaskRunnerProps> = ({
         {/* Step 5: Success Feedback */}
         {taskState === 'success' && (
           <div className="text-center py-8 space-y-6">
-            <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-4xl animate-bounce">
-              🎉
+            <div className="flex items-center justify-center mx-auto">
+              <SmartyMascot3D action="victory" size="xl" lang={language} />
             </div>
             <h4 className="text-2xl font-black text-slate-900 dark:text-white">
               {currentTask.correctMessage[language]}
@@ -243,8 +257,8 @@ export const JuniorTaskRunner: React.FC<JuniorTaskRunnerProps> = ({
         {/* Step 5: Retry Feedback */}
         {taskState === 'retry' && (
           <div className="text-center py-8 space-y-6">
-            <div className="w-20 h-20 bg-amber-100 dark:bg-amber-950 text-amber-600 rounded-full flex items-center justify-center mx-auto text-4xl">
-              💪
+            <div className="flex items-center justify-center mx-auto">
+              <SmartyMascot3D action="encouraging" size="xl" lang={language} />
             </div>
             <h4 className="text-2xl font-black text-slate-900 dark:text-white">
               {currentTask.retryMessage[language]}
